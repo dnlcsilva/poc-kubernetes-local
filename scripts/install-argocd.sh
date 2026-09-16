@@ -26,7 +26,9 @@ kubectl patch configmap argocd-cmd-params-cm -n argocd --type merge \
   -p '{"data":{"server.insecure":"true"}}'
 kubectl apply -f kubernetes/argocd/ingress.yaml
 kubectl rollout restart deployment/argocd-server -n argocd
-kubectl rollout status deployment --all -n argocd --timeout=10m
+while IFS= read -r deployment; do
+  kubectl rollout status "$deployment" -n argocd --timeout=10m
+done < <(kubectl get deployment -n argocd -o name)
 kubectl rollout status statefulset/argocd-application-controller -n argocd --timeout=10m
 
 repo_url_escaped=${REPO_URL//&/\\&}

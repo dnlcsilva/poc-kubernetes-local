@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +17,9 @@
       --success: #4ade80;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -53,8 +56,17 @@
       letter-spacing: 0.14em;
     }
 
-    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; }
-    .description { margin: 16px 0 0; color: var(--muted); line-height: 1.6; }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.08;
+    }
+
+    .description {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
 
     .status {
       display: inline-flex;
@@ -78,22 +90,33 @@
       box-shadow: 0 0 10px var(--success);
     }
 
-    .details, nav {
+    .details,
+    nav {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 12px;
       margin-top: 32px;
     }
 
-    .detail, nav a {
+    .detail,
+    nav a {
       padding: 18px;
       border: 1px solid var(--border);
       border-radius: 12px;
       background: rgba(15, 23, 42, 0.65);
     }
 
-    .detail span, nav a span { display: block; color: var(--muted); font-size: 0.82rem; }
-    .detail strong { display: block; margin-top: 6px; }
+    .detail span,
+    nav a span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .detail strong {
+      display: block;
+      margin-top: 6px;
+    }
 
     nav a {
       color: var(--text);
@@ -101,16 +124,32 @@
       transition: border-color 150ms ease, transform 150ms ease;
     }
 
-    nav a:hover { border-color: var(--accent); transform: translateY(-2px); }
-    nav a strong { display: block; margin-bottom: 7px; color: var(--accent); }
+    nav a:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
 
-    footer { margin-top: 30px; color: var(--muted); font-size: 0.78rem; text-align: center; }
+    nav a strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--accent);
+    }
+
+    footer {
+      margin-top: 30px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: center;
+    }
 
     @media (max-width: 620px) {
-      header { flex-direction: column; }
+      header {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
+
 <body>
   <main>
     <header>
@@ -121,7 +160,7 @@
           Aplicação FastAPI executando em Kubernetes com pipeline, segurança e observabilidade.
         </p>
       </div>
-      <span class="status">Operacional</span>
+      <span class="status">Operacionale</span>
     </header>
 
     <section class="details" aria-label="Detalhes da aplicação">
@@ -151,4 +190,5 @@
     }
   </script>
 </body>
+
 </html>

@@ -171,8 +171,10 @@ pipeline {
 
           if kubectl get application poc-app -n argocd >/dev/null 2>&1; then
             echo '[INFO] Modo GitOps ativo: solicitando o deploy ao Argo CD.'
-            kubectl patch application poc-app -n argocd --type merge --patch \
-              "{\"spec\":{\"source\":{\"helm\":{\"parameters\":[{\"name\":\"image.repository\",\"value\":\"harbor.local/poc/poc-app\"},{\"name\":\"image.tag\",\"value\":\"${APP_VERSION}\"},{\"name\":\"image.pullPolicy\",\"value\":\"Always\"}]}}}}"
+            kubectl patch application poc-app -n argocd --type merge \
+              --patch-file=/dev/stdin <<PATCH
+{"spec":{"source":{"helm":{"parameters":[{"name":"image.repository","value":"harbor.local/poc/poc-app"},{"name":"image.tag","value":"${APP_VERSION}"},{"name":"image.pullPolicy","value":"Always"}]}}}}
+PATCH
             kubectl annotate application poc-app -n argocd \
               argocd.argoproj.io/refresh=hard --overwrite
 
