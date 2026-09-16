@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: poc-app-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: poc-app.rules
+      rules:
+        - alert: PocAppDown
+          expr: min(up{namespace="poc", service="poc-app"}) == 0 or absent(up{namespace="poc", service="poc-app"})
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: Aplicação da POC indisponível
+            description: O Prometheus não encontra nenhum target saudável do serviço poc-app há mais de um minuto.

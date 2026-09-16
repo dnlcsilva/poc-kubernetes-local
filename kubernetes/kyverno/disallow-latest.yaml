@@ -1,0 +1,65 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: require-versioned-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Container images must use an explicit version tag or digest; :latest and omitted tags are forbidden."
+        foreach:
+          - list: "request.object.spec.containers"
+            deny:
+              conditions:
+                any:
+                  - key: "{{ regex_match('^.+:latest$', element.image) }}"
+                    operator: Equals
+                    value: true
+                  - key: "{{ regex_match('^.+(:[^/:@]+|@[A-Za-z0-9_+.-]+:[A-Fa-f0-9]+)$', element.image) }}"
+                    operator: Equals
+                    value: false
+    - name: require-versioned-init-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Init container images must use an explicit version tag or digest; :latest and omitted tags are forbidden."
+        foreach:
+          - list: "request.object.spec.initContainers || `[]`"
+            deny:
+              conditions:
+                any:
+                  - key: "{{ regex_match('^.+:latest$', element.image) }}"
+                    operator: Equals
+                    value: true
+                  - key: "{{ regex_match('^.+(:[^/:@]+|@[A-Za-z0-9_+.-]+:[A-Fa-f0-9]+)$', element.image) }}"
+                    operator: Equals
+                    value: false
+    - name: require-versioned-ephemeral-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: "Ephemeral container images must use an explicit version tag or digest; :latest and omitted tags are forbidden."
+        foreach:
+          - list: "request.object.spec.ephemeralContainers || `[]`"
+            deny:
+              conditions:
+                any:
+                  - key: "{{ regex_match('^.+:latest$', element.image) }}"
+                    operator: Equals
+                    value: true
+                  - key: "{{ regex_match('^.+(:[^/:@]+|@[A-Za-z0-9_+.-]+:[A-Fa-f0-9]+)$', element.image) }}"
+                    operator: Equals
+                    value: false

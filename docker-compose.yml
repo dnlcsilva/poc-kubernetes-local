@@ -1,0 +1,70 @@
+name: poc-devops
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: jenkins/Dockerfile
+    container_name: poc-jenkins
+    user: root
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      CASC_JENKINS_CONFIG: /usr/share/jenkins/ref/jenkins.yaml
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+      JENKINS_ADMIN_USER: ${JENKINS_ADMIN_USER:-admin}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?JENKINS_ADMIN_PASSWORD is required}
+      SONAR_TOKEN: ${SONAR_TOKEN:?SONAR_TOKEN is required}
+      HARBOR_USER: ${HARBOR_USER:-admin}
+      HARBOR_PASSWORD: ${HARBOR_PASSWORD:?HARBOR_PASSWORD is required}
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${POC_KUBECONFIG_PATH:?POC_KUBECONFIG_PATH is required}:/root/.kube/config:ro
+      - ${HOST_PROJECT_PATH:-.}:/workspace:ro
+    extra_hosts:
+      - "harbor.local:127.0.0.1"
+
+  sonar-db:
+    image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    container_name: poc-sonar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db:/var/lib/postgresql/data
+    networks:
+      - poc
+
+  sonarqube:
+    image: sonarqube:community@sha256:aa7146fd72ef79ea8ca06315ca3121db9bb1c24a83ba5255e8df67b43dee6e04
+    container_name: poc-sonarqube
+    restart: unless-stopped
+    depends_on:
+      - sonar-db
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_extensions:/opt/sonarqube/extensions
+      - sonar_logs:/opt/sonarqube/logs
+    networks:
+      - poc
+
+networks:
+  poc:
+    name: poc-devops-internal
+
+volumes:
+  jenkins_home: {}
+  sonar_db: {}
+  sonar_data: {}
+  sonar_extensions: {}
+  sonar_logs: {}

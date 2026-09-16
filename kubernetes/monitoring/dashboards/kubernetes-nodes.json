@@ -1,0 +1,63 @@
+{
+  "editable": true,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 0},
+      "id": 1,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"} == 1)", "refId": "A"}],
+      "title": "Nodes prontos",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 0},
+      "id": 2,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"} == 0) or vector(0)", "refId": "A"}],
+      "title": "Nodes indisponíveis",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 0},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "count(kube_node_info)", "refId": "A"}],
+      "title": "Total de nodes",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 6},
+      "id": 4,
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [{"expr": "1 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))", "legendFormat": "{{instance}}", "refId": "A"}],
+      "title": "Uso de CPU por node",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"max": 1, "min": 0, "unit": "percentunit"}, "overrides": []},
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 6},
+      "id": 5,
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [{"expr": "1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)", "legendFormat": "{{instance}}", "refId": "A"}],
+      "title": "Uso de memória por node",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 39,
+  "tags": ["poc", "kubernetes", "nodes"],
+  "time": {"from": "now-1h", "to": "now"},
+  "timezone": "browser",
+  "title": "Kubernetes / Nodes",
+  "uid": "poc-kubernetes-nodes",
+  "version": 1
+}

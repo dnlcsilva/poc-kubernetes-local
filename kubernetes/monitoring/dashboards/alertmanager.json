@@ -1,0 +1,56 @@
+{
+  "editable": true,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 0},
+      "id": 1,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "sum(up{job=~\".*alertmanager.*\"})", "refId": "A"}],
+      "title": "Instâncias disponíveis",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 0},
+      "id": 2,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "sum(ALERTS{alertstate=\"firing\"}) or vector(0)", "refId": "A"}],
+      "title": "Alertas firing",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 0},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [{"expr": "sum(rate(alertmanager_notifications_failed_total[5m])) or vector(0)", "refId": "A"}],
+      "title": "Falhas de notificação/s",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 6},
+      "id": 4,
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
+      "targets": [
+        {"expr": "sum by (integration) (rate(alertmanager_notifications_total[5m]))", "legendFormat": "enviadas: {{integration}}", "refId": "A"},
+        {"expr": "sum by (integration) (rate(alertmanager_notifications_failed_total[5m]))", "legendFormat": "falhas: {{integration}}", "refId": "B"}
+      ],
+      "title": "Notificações do Alertmanager",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 39,
+  "tags": ["poc", "alertmanager"],
+  "time": {"from": "now-1h", "to": "now"},
+  "timezone": "browser",
+  "title": "Alertmanager / POC",
+  "uid": "poc-alertmanager",
+  "version": 1
+}

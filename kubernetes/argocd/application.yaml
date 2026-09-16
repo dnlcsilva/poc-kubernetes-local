@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: {name: poc-app, namespace: argocd}
+spec:
+  project: default
+  source:
+    repoURL: REPLACE_WITH_YOUR_GIT_REPOSITORY
+    targetRevision: HEAD
+    path: helm/poc-app
+    helm:
+      parameters:
+        - name: image.repository
+          value: REPLACE_WITH_IMAGE_REPOSITORY
+        - name: image.tag
+          value: REPLACE_WITH_IMAGE_TAG
+        - name: image.pullPolicy
+          value: Always
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: poc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions: [CreateNamespace=true]

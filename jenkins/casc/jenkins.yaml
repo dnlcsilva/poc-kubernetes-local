@@ -1,0 +1,29 @@
+jenkins:
+  systemMessage: "POC Kubernetes Local - Jenkins configurado como codigo"
+  numExecutors: 2
+  mode: NORMAL
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_USER}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "harbor-creds"
+              username: "${HARBOR_USER}"
+              password: "${HARBOR_PASSWORD}"
+              description: "Harbor local da POC"
+          - string:
+              scope: GLOBAL
+              id: "sonar-token"
+              secret: "${SONAR_TOKEN}"
+              description: "Token SonarQube gerado pelo bootstrap"

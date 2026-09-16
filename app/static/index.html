@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>POC Kubernetes Local</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #0b1120;
+      --surface: #111827;
+      --border: #263244;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --success: #4ade80;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: radial-gradient(circle at top, #172554 0, var(--background) 45%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+
+    main {
+      width: min(860px, 100%);
+      padding: clamp(28px, 5vw, 48px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: rgba(17, 24, 39, 0.94);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; }
+    .description { margin: 16px 0 0; color: var(--muted); line-height: 1.6; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 999px;
+      color: var(--success);
+      background: rgba(74, 222, 128, 0.08);
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      content: "";
+      box-shadow: 0 0 10px var(--success);
+    }
+
+    .details, nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .detail, nav a {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    .detail span, nav a span { display: block; color: var(--muted); font-size: 0.82rem; }
+    .detail strong { display: block; margin-top: 6px; }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color 150ms ease, transform 150ms ease;
+    }
+
+    nav a:hover { border-color: var(--accent); transform: translateY(-2px); }
+    nav a strong { display: block; margin-bottom: 7px; color: var(--accent); }
+
+    footer { margin-top: 30px; color: var(--muted); font-size: 0.78rem; text-align: center; }
+
+    @media (max-width: 620px) {
+      header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">DEVOPS LAB</p>
+        <h1>POC Kubernetes Local</h1>
+        <p class="description">
+          Aplicação FastAPI executando em Kubernetes com pipeline, segurança e observabilidade.
+        </p>
+      </div>
+      <span class="status">Operacional</span>
+    </header>
+
+    <section class="details" aria-label="Detalhes da aplicação">
+      <div class="detail"><span>Ambiente</span><strong id="environment">carregando...</strong></div>
+      <div class="detail"><span>Versão</span><strong id="version">carregando...</strong></div>
+      <div class="detail"><span>Plataforma</span><strong>Kubernetes</strong></div>
+    </section>
+
+    <nav aria-label="Endpoints da aplicação">
+      <a href="/healthz"><strong>Health check</strong><span>Estado da aplicação</span></a>
+      <a href="/metrics"><strong>Métricas</strong><span>Dados para o Prometheus</span></a>
+      <a href="/docs"><strong>API Docs</strong><span>Documentação OpenAPI</span></a>
+    </nav>
+
+    <footer>Jenkins · Harbor · Kubernetes · Prometheus · Grafana</footer>
+  </main>
+
+  <script type="module">
+    try {
+      const response = await fetch("/info");
+      const data = await response.json();
+      document.getElementById("environment").textContent = data.environment;
+      document.getElementById("version").textContent = data.version;
+    } catch {
+      document.getElementById("environment").textContent = "indisponível";
+      document.getElementById("version").textContent = "indisponível";
+    }
+  </script>
+</body>
+</html>

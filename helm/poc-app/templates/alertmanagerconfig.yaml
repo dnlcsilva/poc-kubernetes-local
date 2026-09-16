@@ -1,0 +1,31 @@
+{{- if .Values.alerting.enabled }}
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ include "poc-app.fullname" . }}
+  labels:
+    {{- include "poc-app.labels" . | nindent 4 }}
+spec:
+  route:
+    receiver: poc-app-webhook
+    groupBy:
+      - alertname
+    groupWait: {{ .Values.alerting.groupWait }}
+    groupInterval: {{ .Values.alerting.groupInterval }}
+    repeatInterval: {{ .Values.alerting.repeatInterval }}
+    matchers:
+      - name: alertname
+        matchType: "="
+        value: PocAppDown
+  receivers:
+    - name: poc-app-webhook
+      webhookConfigs:
+        - url: http://{{ include "poc-app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local/alerts
+          sendResolved: true
+          httpConfig:
+            authorization:
+              type: Bearer
+              credentials:
+                name: {{ include "poc-app.fullname" . }}
+                key: API_KEY
+{{- end }}
